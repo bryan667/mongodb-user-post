@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css?family=Fredoka+One|Righteous|Roboto|Rubik');
+
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 62.5%;
+  /*10/16px - of the browser's set font size */
+}
+
+@media (min-width: 1px) {
+    h1 {
+        font-size: 3.0rem;
+    }
+    
+    h2 {
+        font-size: 2.0rem;
+    }
+
+    body {
+        font-size: 1.6rem;
+    }
+}
+
+body {
+    position: absolute;
+    min-height: 100vh;
+    min-width: 100vw;
+    font-family: "Roboto", "Times New Roman";
+    line-height: 1.42857143;
+    color: rgb(29, 29, 29);
+}
+
+
+/* #root {
+    background-image: url('/images/22222.jpg');
+    background-repeat: repeat;
+    background-size: 1800px 1000px;
+} */
+
+.spinner {
+    display: block;    
+    margin: auto;
+}
+
+.error_label {
+    color: #F44336;
+    font-weight: 550;
+}
