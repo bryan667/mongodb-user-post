@@ -1,6 +1,8 @@
 const express = require ('express')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
+const fs = require('fs')
+const multer = require('multer')
 
 const app = express ()
 const mongoose = require('mongoose')
@@ -27,6 +29,7 @@ const {Image} = require('./models/image')
 
 //Middleware
 const {auth} = require('./middleware/auth')
+const {upload} = require('./middleware/multer')
 
 //=================================================================
 //                          USERS
@@ -174,5 +177,35 @@ app.get('/api/posts/docs', (req,res)=> {
 //                          IMAGES
 //=================================================================
 
-//upload
+app.post('/api/images/upload', upload.single('inputFile'), (req, res, err)=> {
+    if (req.body.err) {
+        return res.json({ message: req.body.err })
+    } else if (err instanceof multer.MulterError) {
+        return res.json({ message: 'multer error occurred while uploading file' })
+    } else if (!req.file) {
+        return res.json({ message: 'No file selected' })        
+    } else if (req.file.size > (1024 * 1024)) {
+        fs.unlink(req.file.path, (err) => {
+            if (err) throw err;
+        })
+        return res.json({ message: 'File is too large, limit 1MB' }) 
+    }
+    
+    // reading file from uploads path
+    req.body.data = fs.readFileSync(req.file.path)
+    req.body.contentType = req.file.mimetype
+    fs.unlink(req.file.path, (err) => {
+        if (err) throw err;
+    })
+
+    const image = new Image(req.body)
+    image.save((err, doc) => {
+        if (err) return res.status(400).send(err)
+        return res.json({
+            success: true,
+            message: 'image successfully uploaded'
+        })
+    })
+})
+
 //query
