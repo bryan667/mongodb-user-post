@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import {firebase} from '../../firebase-db'
 import FormField from '../ui/formFields'
 import {validateFunction} from '../ui/misc'
 import {Button} from 'react-bootstrap'
@@ -81,17 +80,6 @@ class SignIn extends Component {
         console.log(dataToSubmit)
 
         if (formIsValid) {
-            firebase.auth()
-            .signInWithEmailAndPassword(
-                dataToSubmit.email,
-                dataToSubmit.password
-            ).then(()=> {
-                this.props.history.push('/')
-            }).catch(error => {
-                this.setState({
-                    formError: true
-                })
-            })
 
         } else {
             this.setState({

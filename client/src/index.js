@@ -1,20 +1,25 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import './css/main.css'
 
 import { BrowserRouter } from 'react-router-dom';
 import Routes from './routes';
-import {firebase} from './firebase-db'
-import './css/main.css'
 
-const App = (props) => {
-  return (
+import { Provider } from 'react-redux'
+import { createStore, applyMiddleware } from 'redux'
+import promiseMiddleware from 'redux-promise'
+import ReduxThunk from 'redux-thunk'
+
+import Reducer from './redux/reducers/index'
+
+
+
+const createStoreMiddleware = applyMiddleware(promiseMiddleware,ReduxThunk)(createStore)
+
+ReactDOM.render(
+  <Provider store={createStoreMiddleware(Reducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())}>
     <BrowserRouter>
-      <Routes {...props}/>
+      <Routes/>
     </BrowserRouter>
-  );
-};
-
-firebase.auth().onAuthStateChanged((user)=> {
-  //pass user as props
-  ReactDOM.render(<App user={user}/>, document.getElementById('root'));
-})
+  </Provider>
+, document.getElementById('root'));

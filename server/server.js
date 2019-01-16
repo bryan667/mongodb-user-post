@@ -3,14 +3,16 @@ const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const fs = require('fs')
 const multer = require('multer')
+require('dotenv').config({path:__dirname+'/.env'}) //loads environment variables from .env file into process.env
 
 const app = express ()
 const mongoose = require('mongoose')
-require('dotenv').config() //loads environment variables from .env file into process.env
 
-mongoose.Promise = global.Promise
 mongoose.connect(process.env.DATABASE, { useNewUrlParser: true })
+mongoose.Promise = global.Promise
 mongoose.set('useCreateIndex', true)
+
+
 
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json())
@@ -94,7 +96,7 @@ app.get('/api/users/userid', (req, res)=> {
         return res.status(200).send({
             success: false,
             message: 'no userID'
-        }) 
+        })
     }
 
     User.findOne(
@@ -203,9 +205,26 @@ app.post('/api/images/upload', upload.single('inputFile'), (req, res, err)=> {
         if (err) return res.status(400).send(err)
         return res.json({
             success: true,
-            message: 'image successfully uploaded'
+            message: 'image successfully uploaded',
+            imageID: doc._id
         })
     })
 })
 
-//query
+//query /imageid?id=5c3ea39b83dfa729a8bdc92a
+app.get('/api/images/imageid', (req, res)=> {
+    if (!req.query.id) {
+        return res.status(200).json({
+            success: false,
+            message: 'no imageID'
+        })
+    }
+
+    Image.findOne(
+        {_id: req.query.id},
+        (err, doc)=>{
+            if (err) return res.json({success:false, err})
+            return res.status(200).contentType(doc.contentType).send(doc.data)
+        }
+    )
+})

@@ -1,15 +1,18 @@
 import React from 'react';
 import { Navbar, Nav, NavItem} from 'react-bootstrap'
 import { IndexLinkContainer, LinkContainer } from 'react-router-bootstrap'
-import {firebase} from '../../firebase-db'
 import '../../css/header.css'
+
+import { connect } from 'react-redux'
+import { logoutUser } from '../../redux/actions/user_actions'
 
 const Header = (props) => {
     const logoutHandler = () => {
-        firebase.auth().signOut().then(()=> {
-            console.log('Log out successful')
-        }, (error) => {
-            console.log(`Error logging out: ${error}`)
+        this.props.dispatch(logoutUser())
+        .then(response => {
+            if (response.payload.success) {
+                console.log('logout successful')
+            }
         })
     }
 
@@ -25,6 +28,7 @@ const Header = (props) => {
 
     return (
         <div>
+            {console.log('header:', props)}
             <Navbar inverse collapseOnSelect>
             <Navbar.Header>
                 <IndexLinkContainer to='/'>
@@ -67,7 +71,13 @@ const Header = (props) => {
                 </Navbar.Collapse>
             </Navbar>
         </div>
-    );
-};
+    )
+}
 
-export default Header;
+function mapStatetoProps(state) {
+    return {
+        user: state.user
+    }
+}
+
+export default connect(mapStatetoProps)(Header)

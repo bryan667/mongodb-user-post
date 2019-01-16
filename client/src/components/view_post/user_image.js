@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import ReactLoading from 'react-loading'
-import {firebaseUsers} from '../../firebase-db'
 import {convertArray} from '../ui/misc'
 
 class UserImage extends Component {
@@ -10,12 +9,7 @@ class UserImage extends Component {
     }
 
     componentDidMount(){
-        firebaseUsers.orderByChild('email').equalTo(this.props.email).once('value', ((snap)=> {
-            const data = convertArray(snap)
-            this.setState({
-                imageURL: data[0].imageURL
-            })
-        }))
+        ////
     }
 
     render() {

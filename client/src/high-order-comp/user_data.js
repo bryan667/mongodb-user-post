@@ -1,28 +1,13 @@
-import React, { Component } from 'react';
-import {firebaseUsers} from '../firebase-db'
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { auth } from '../redux/actions/user_actions'
 
 export default function retrieveUserData(WrappedComponent) {
-
-    return class extends Component {
-
-        state = {
-            firstName: '',
-            lastName: '',
-            email: '',
-            imageURL: '',
-        }
-
+    class AuthCheck extends Component {
         componentDidMount() {
             if (this.props.user!=null) { 
-                firebaseUsers.orderByChild('email').equalTo(this.props.user.email).once('value', (snap)=> {
-                    snap.forEach((data)=> {
-                        this.setState({
-                            firstName: data.val().firstName,
-                            lastName: data.val().lastName,
-                            email: data.val().email,
-                            imageURL: data.val().imageURL
-                        })
-                    });
+                this.props.dispatch(auth()).then(response => {
+                    console.log('awyis: ', response)
                 })
             }
         }
@@ -33,4 +18,11 @@ export default function retrieveUserData(WrappedComponent) {
             );
         }
     }
+
+    function mapStateToProps(state) {
+        return {
+            user: state.user
+        }
+    }
+    return connect(mapStateToProps)(AuthCheck)
 }

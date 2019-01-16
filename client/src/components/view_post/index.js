@@ -7,7 +7,6 @@ import ImageModal from './image_modal'
 import RemoveModal from './remove_modal'
 import ImageUploader from './image_uploader'
 import UserImage from './user_image'
-import {firebase, firebasePosts} from '../../firebase-db'
 import retrieveUserData from '../../high-order-comp/user_data'
 import '../../css/view_post.css'
 
@@ -68,14 +67,6 @@ class ViewPost extends Component {
     componentDidMount() {
         window.addEventListener('scroll', this.onScroll)
 
-        firebasePosts.limitToLast(this.state.itemsToDisplay).on('value', ((snap)=> {
-            const arrayPosts = convertArray(snap)
-
-            this.setState({
-                posts: reverseArray(arrayPosts),
-                postsLoading: false
-            })
-        }))
     }
 
     componentWillUnmount() {
@@ -111,47 +102,12 @@ class ViewPost extends Component {
     }
 
     deletePost = () => {
-        const tempElement = {...this.state.removeModal}
-        const tempPost = this.state.posts
-        firebasePosts.child(tempElement.id).remove().then(()=>{
-            tempElement.show = false
-            tempPost.splice(tempElement.index, 1)
-
-            this.setState({ 
-                posts: tempPost,
-                removeModal: tempElement,
-                reload: true
-            })
-
-            setTimeout(()=> {
-                this.setState({
-                    reload: false
-                })
-            }, 0)
-        })        
+ 
     }
 
     savePost = () => {
         const tempElement = {...this.state.editModal}
         this.errorCheck(tempElement)
-
-        if (this.state.formError === false) {
-            firebasePosts.orderByKey().equalTo(tempElement.id).once('value', ((snap)=> {
-                const tempArr=[]
-                snap.forEach((child)=> {
-                    tempArr.push(child)
-                });
-                tempArr[0].ref.update({post: tempElement.value})
-            })).then(()=> {
-                const tempPost = this.state.posts
-                tempPost[tempElement.index].post = tempElement.value
-
-                this.setState({ 
-                    post: tempPost
-                })
-                this.closePost('editModal')
-            })
-        }
     }
 
     onScroll =(event)=> {
@@ -165,14 +121,6 @@ class ViewPost extends Component {
                     postsLoading: true,
                     scrollHeight: body.scrollHeight,
                     previousLength: this.state.posts.length
-                })
-
-                firebasePosts.limitToLast(addItems).once('value').then((snap)=> {
-                    const arrayPosts = convertArray(snap)
-                    this.setState({
-                        posts: reverseArray(arrayPosts),
-                        postsLoading: false,
-                    })
                 })
             }
         }
@@ -210,11 +158,7 @@ class ViewPost extends Component {
                 imageURL: tempState.image.url
             }
 
-            firebasePosts.push(dataToSubmit).then(()=> {
-                console.log("Message posted!")
-            }).catch(e=>{
-                console.log("Unable to post. Something went wrong.")
-            })
+            ///
 
             tempState.image.fileName = ''
             tempState.image.url = ''
@@ -250,12 +194,8 @@ class ViewPost extends Component {
     }
 
     removeImage = () => {
-        firebase.storage().ref('images').child(this.state.image.fileName).delete().then(()=> {
-            console.log(`file has been deleted: ${this.state.image.fileName}`)
-        }).catch(function(error) {
-            console.log('Uh-oh, an error occurred!')
-        });
-
+        ////
+        
         const imageData = {...this.state.image}
         imageData.fileName = ''
         imageData.url = ''

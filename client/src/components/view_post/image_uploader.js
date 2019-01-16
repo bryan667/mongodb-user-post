@@ -1,7 +1,5 @@
 import React, { Component } from 'react'
 import ReactLoading from 'react-loading'
-import { firebase } from '../../firebase-db'
-import FileUploader from 'react-firebase-file-uploader'
 
 class ImageUploader extends Component {
 
@@ -22,15 +20,7 @@ class ImageUploader extends Component {
      }
 
     handleUploadSuccess = (filename) => {
-        firebase.storage().ref('images')
-        .child(filename).getDownloadURL()
-        .then( url => {
-            this.props.passFile(filename, url)
 
-            this.setState({
-                isUploading:false,
-            })
-        })
     }
     
     reset = () => {
@@ -52,15 +42,6 @@ class ImageUploader extends Component {
                 { !this.props.url ?
                     <div className='image_up'>
                         <div>{this.props.tag}</div>
-                        <FileUploader
-                            accept="image/*"
-                            name="image"
-                            randomizeFilename
-                            storageRef={firebase.storage().ref('images')}
-                            onUploadStart={ this.handleUploadStart }
-                            onUploadError={ this.handleUploadError }
-                            onUploadSuccess={ this.handleUploadSuccess }
-                        />
                     </div>
                     :null
                 }
