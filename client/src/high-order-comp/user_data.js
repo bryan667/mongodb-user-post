@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { auth } from '../redux/actions/user_actions'
 
-export default function retrieveUserData(WrappedComponent) {
+export default function Authe(WrappedComponent) {
     class AuthCheck extends Component {
         componentDidMount() {
             if (this.props.user!=null) { 

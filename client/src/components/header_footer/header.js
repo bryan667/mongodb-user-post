@@ -18,11 +18,37 @@ const Header = (props) => {
 
     const privateButtons = () => (
         <React.Fragment>
-            <LinkContainer to='/view_post'>
-                <NavItem>
-                    View Posts
-                </NavItem>
-            </LinkContainer>
+            {props.user.userData.isAuth===true ?
+                <LinkContainer to='/view_post'>
+                    <NavItem>
+                        View Posts
+                    </NavItem>
+                </LinkContainer>
+                :
+                null
+            }
+        </React.Fragment>
+    )
+
+    const signInButton = () => (
+        <React.Fragment>
+            {props.user.userData.isAuth===true ?
+                <Nav pullRight>
+                    <LinkContainer to='/sign_in'>
+                        <NavItem onClick={()=> logoutHandler()}>
+                            Log Out
+                        </NavItem>
+                    </LinkContainer>
+                </Nav>
+                :
+                <Nav pullRight>
+                    <LinkContainer to='/sign_in'>
+                        <NavItem>
+                            Sign In
+                        </NavItem>
+                    </LinkContainer>
+                </Nav>
+            }
         </React.Fragment>
     )
 
@@ -44,29 +70,16 @@ const Header = (props) => {
                                 Home
                             </NavItem>
                         </IndexLinkContainer>
-
-                        {props.user!=null ? 
+                        {props.user.userData!=null ? 
                             (privateButtons())
                             :
-                        null
+                            null
                         }
                     </Nav>
-                {props.user!=null ? 
-                    <Nav pullRight>
-                        <LinkContainer to='/sign_in'>
-                            <NavItem onClick={()=> logoutHandler()}>
-                                Log Out
-                            </NavItem>
-                        </LinkContainer>
-                    </Nav>
-                        :
-                    <Nav pullRight>
-                        <LinkContainer to='/sign_in'>
-                            <NavItem onClick={()=> logoutHandler()}>
-                                Sign In
-                            </NavItem>
-                        </LinkContainer>
-                    </Nav>
+                {props.user.userData!=null ? 
+                    (signInButton())
+                    :
+                    null
                 }
                 </Navbar.Collapse>
             </Navbar>
