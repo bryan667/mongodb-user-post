@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 import FormField from '../ui/formFields'
 import {validateFunction} from '../ui/misc'
+import {loginUser} from '../../redux/actions/user_actions'
+
+import { withRouter } from 'react-router-dom'
 import {Button} from 'react-bootstrap'
+import {connect} from 'react-redux'
 import '../../css/sign_in.css'
 
 class SignIn extends Component {
@@ -71,16 +75,24 @@ class SignIn extends Component {
         let dataToSubmit = {}
         let formIsValid = true
 
-        //for in
         for (let items in this.state.formData) {            
             dataToSubmit[items] = this.state.formData[items].value
             formIsValid = this.state.formData[items].valid            
         }
 
-        console.log(dataToSubmit)
+        console.log('data:', dataToSubmit)
 
         if (formIsValid) {
-
+            this.props.dispatch(loginUser(dataToSubmit)).then(res => {
+                console.log('res:', res)
+                if(res.payload.loginSuccess){
+                    this.props.history.push('/')
+                } else {
+                    this.setState({
+                        formError: true
+                    })
+                }
+            })
         } else {
             this.setState({
                 formError: true
@@ -128,4 +140,4 @@ class SignIn extends Component {
     }
 }
 
-export default SignIn;
+export default connect()(withRouter(SignIn));

@@ -1,16 +1,18 @@
 import React from 'react';
 import { Navbar, Nav, NavItem} from 'react-bootstrap'
 import { IndexLinkContainer, LinkContainer } from 'react-router-bootstrap'
+import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
 import '../../css/header.css'
 
-import { connect } from 'react-redux'
-import { logoutUser } from '../../redux/actions/user_actions'
+import {logoutUser} from '../../redux/actions/user_actions'
 
 const Header = (props) => {
-    const logoutHandler = () => {
-        this.props.dispatch(logoutUser())
+    const logoutHandler = () => {     
+        props.dispatch(logoutUser())
         .then(response => {
             if (response.payload.success) {
+                props.history.push('/')
                 console.log('logout successful')
             }
         })
@@ -34,7 +36,7 @@ const Header = (props) => {
         <React.Fragment>
             {props.user.userData.isAuth===true ?
                 <Nav pullRight>
-                    <LinkContainer to='/sign_in'>
+                    <LinkContainer to='#'>
                         <NavItem onClick={()=> logoutHandler()}>
                             Log Out
                         </NavItem>
@@ -93,4 +95,4 @@ function mapStatetoProps(state) {
     }
 }
 
-export default connect(mapStatetoProps)(Header)
+export default connect(mapStatetoProps)(withRouter(Header))

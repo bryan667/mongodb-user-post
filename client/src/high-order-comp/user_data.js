@@ -6,9 +6,7 @@ export default function Authe(WrappedComponent) {
     class AuthCheck extends Component {
         componentDidMount() {
             if (this.props.user!=null) { 
-                this.props.dispatch(auth()).then(response => {
-                    console.log('awyis: ', response)
-                })
+                this.props.dispatch(auth())
             }
         }
 
@@ -24,5 +22,6 @@ export default function Authe(WrappedComponent) {
             user: state.user
         }
     }
+
     return connect(mapStateToProps)(AuthCheck)
 }

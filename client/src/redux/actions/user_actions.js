@@ -16,9 +16,19 @@ export function auth() {
 export function logoutUser() {
     const request = axios.get(`${USERS_SERVER}/logout`)
         .then(response => response.data)
-
+        
         return {
             type: LOGOUT_USER,
+            payload: request
+        }
+}
+
+export function loginUser(dataToSubmit) {
+    const request = axios.post(`${USERS_SERVER}/login`, dataToSubmit)
+        .then(response => response.data)
+
+        return {
+            type: LOGIN_USER,
             payload: request
         }
 }
