@@ -83,6 +83,7 @@ app.get('/api/users/auth', auth, (req, res)=> {
     return res.status(200).json({
         message: 'awyis',
         isAuth: true,
+        _id: req.user._id,
         email: req.user.email,
         firstname: req.user.firstname,
         lastname: req.user.lastname,
@@ -132,16 +133,17 @@ app.post('/api/posts/newpost', auth, (req, res)=> {
 
 //edit post
 app.post('/api/posts/postid', auth, (req, res)=> {
-    if (!req.body.postid) {
+    if (!req.body.id) {
         return res.status(200).json({
             success: false,
             message: 'unable to edit post'
-        }) 
+        })
     }
 
     Post.findOneAndUpdate(
-        {_id: req.body.postid, userInfo: req.body.userInfo},
-        {post: req.body.post},
+        {_id: req.body.id, userInfo: req.body.userInfo},
+        {post: req.body.value},
+        {new: true},
         (err, doc)=>{
         if (err) return res.json({success:false, err})
         return res.status(200).json({

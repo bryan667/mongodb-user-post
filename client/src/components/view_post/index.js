@@ -4,7 +4,7 @@ import ReactLoading from 'react-loading'
 import {connect} from 'react-redux'
 
 import {validateFunction, showError, convertArray, reverseArray} from '../ui/misc'
-import {postDocs} from '../../redux/actions/post_action'
+import {getPosts, newPost, byPostID} from '../../redux/actions/post_action'
 import EditModal from './edit_modal'
 import ImageModal from './image_modal'
 import RemoveModal from './remove_modal'
@@ -18,13 +18,12 @@ class ViewPost extends Component {
         formError: true,
         userData: '',
         disabled: false,
-        reload: false,
         postsLoading: true,
         previousLength: 0,
         posts: [],
         image:{
             fileName: '',
-            url: '',
+            id: '',
         },
         imageModal: {
             src: '',
@@ -65,7 +64,7 @@ class ViewPost extends Component {
 
     componentDidMount() {
         window.addEventListener('scroll', this.onScroll)
-        this.props.dispatch(postDocs(5)).then(res => {
+        this.props.dispatch(getPosts(5)).then(res => {
             console.log(res)
             this.setState({
                 posts: res.payload.docs
@@ -79,7 +78,7 @@ class ViewPost extends Component {
 
     editPost = (post, index, modalName) => {
         const tempElement = {...this.state[modalName]}
-        tempElement.id = post.id
+        tempElement.id = post._id
         tempElement.value = post.post        
         tempElement.index = index
         tempElement.show = true
@@ -111,7 +110,16 @@ class ViewPost extends Component {
 
     savePost = () => {
         const tempElement = {...this.state.editModal}
-        this.errorCheck(tempElement)
+        if (this.state.formError === false) {
+            this.props.dispatch(byPostID(tempElement)).then((res)=> {
+                const tempPost = this.state.posts
+                tempPost[tempElement.index].post = res.payload.doc.post
+                this.setState({
+                    posts: tempPost
+                })
+            })
+        }
+        this.closePost('editModal')
     }
 
     onScroll =(event)=> {
@@ -125,7 +133,7 @@ class ViewPost extends Component {
                 })
             }
             
-            this.props.dispatch(postDocs(2, this.state.previousLength)).then(res => {
+            this.props.dispatch(getPosts(2, this.state.previousLength)).then(res => {
                 const setPosts = this.state.posts
                 res.payload.docs.forEach((posts)=> {
                     setPosts.push(posts)
@@ -161,34 +169,32 @@ class ViewPost extends Component {
         this.errorCheck(tempState.textarea1)
 
         if (this.state.formError === false) {
-            const date = new Date().toUTCString()
-
             const dataToSubmit = {
-                fullName: `${tempState.userData.firstName} ${tempState.userData.lastName}`,
+                userInfo: tempState.userData._id,
                 email: tempState.userData.email,
                 post: tempState.textarea1.value,
-                timeStamp: date,
-                imageURL: tempState.image.url
             }
 
-            ///
+            if (tempState.image.id !== '') {
+                dataToSubmit.imageID = tempState.image.id
+            }
+
+            this.props.dispatch(newPost(dataToSubmit)).then(res => {
+                tempState.posts.unshift(res.payload.article)
+                this.setState({
+                    posts: tempState.posts,
+                })
+            })
 
             tempState.image.fileName = ''
-            tempState.image.url = ''
+            tempState.image.id = ''
             tempState.textarea1.value = ''
 
             this.setState({
                 image: tempState.image,
                 textarea1: tempState.textarea1,
-                disabled: true,
-                reload: true,
+                disabled: true
             })
-
-            setTimeout(()=> {
-                this.setState({
-                    reload: false
-                })
-            }, 0)
 
             setTimeout(()=> {
                 this.setState({
@@ -321,7 +327,7 @@ class ViewPost extends Component {
                         <ImageUploader
                             tag={"Insert Image"}
                             fileName={this.state.image.fileName}
-                            url={this.state.image.url}
+                            id={this.state.image.id}
                             passFile={(filename, url)=> this.storeFilename(filename, url)}
                             removeImage={()=> this.removeImage()}
                             reset={()=> this.reset()}

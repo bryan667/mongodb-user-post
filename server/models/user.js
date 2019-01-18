@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const Schema = mongoose.Schema
 const bcrypt = require('bcrypt')
 const saltRounds = 10
 const jwt = require('jsonwebtoken')
@@ -28,8 +27,7 @@ const userSchema = mongoose.Schema({
         minlength: 5
     },
     imageID: {
-        type: Schema.Types.ObjectId,
-        ref: 'Image',
+        type: String,
         required: false
     },
     role:{

@@ -15,10 +15,10 @@ let auth = (req,res,next) => {
         req.token = token
         req.user = user
 
-        if (req.body.post) {
+        if (req.body.value) {
             req.body.userInfo = user._id
         }
-                
+
         next()
     })
 }
