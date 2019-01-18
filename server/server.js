@@ -86,6 +86,7 @@ app.get('/api/users/auth', auth, (req, res)=> {
         email: req.user.email,
         firstname: req.user.firstname,
         lastname: req.user.lastname,
+        imageID: req.user.imageID,
     })
 })
 

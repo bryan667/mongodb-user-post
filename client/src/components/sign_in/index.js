@@ -44,7 +44,7 @@ class SignIn extends Component {
             },
         },
         textarea: {
-            value: `test-users:\nawyis@gmail.com /\nawyis2@gmail.com /\ndoge@gmail.com /\ncate@gmail.com /\n\npassword: 123456`,
+            value: `test-users:\nawyis@gmail.com /\nawyis2@gmail.com /\ndoge@gmail.com /\ncate@gmail.com /\n**and one secret character** \n\npassword: 123456`,
         }
     }
 
@@ -121,7 +121,7 @@ class SignIn extends Component {
                             type='submit'
                         >Login</Button>
                         <div className='textarea'>
-                            <textarea rows='7' 
+                            <textarea rows='8' 
                                 value={this.state.textarea.value}
                                 readOnly
                             >

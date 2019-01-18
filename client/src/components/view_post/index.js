@@ -6,7 +6,7 @@ import EditModal from './edit_modal'
 import ImageModal from './image_modal'
 import RemoveModal from './remove_modal'
 import ImageUploader from './image_uploader'
-import UserImage from './user_image'
+import UserImage from '../ui/user_image'
 import retrieveUserData from '../../high-order-comp/user_data'
 import '../../css/view_post.css'
 
