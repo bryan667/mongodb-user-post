@@ -5,14 +5,14 @@ import { auth } from '../redux/actions/user_actions'
 export default function Authe(WrappedComponent) {
     class AuthCheck extends Component {
         componentDidMount() {
-            if (this.props.user!=null) { 
+            if (this.props.user!=null) {
                 this.props.dispatch(auth())
             }
         }
 
         render() {
             return (
-                <WrappedComponent userData={this.state} {...this.props}/>
+                <WrappedComponent {...this.props}/>
             );
         }
     }

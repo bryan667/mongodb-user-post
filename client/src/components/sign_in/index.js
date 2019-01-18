@@ -44,7 +44,7 @@ class SignIn extends Component {
             },
         },
         textarea: {
-            value: `test-users:\nawyis@gmail.com /\nawyis2@gmail.com /\ndoge@gmail.com /\ncate@gmail.com /\n**and one secret character** \n\npassword: 123456`,
+            value: `test-users:\nawyis@gmail.com /\nawyis2@gmail.com /\ndoge@gmail.com /\ncate@gmail.com /\n\npassword: 123456`,
         }
     }
 

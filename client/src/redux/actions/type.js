@@ -3,4 +3,6 @@ export const REGISTER_USER = 'register_user'
 export const AUTH_USER = 'auth_user'
 export const LOGOUT_USER = 'logout_user'
 
-export const GET_IMAGE = 'get_image'
+export const UPLOAD_IMAGE = 'upload_image'
+
+export const GET_POSTS = 'get_posts'

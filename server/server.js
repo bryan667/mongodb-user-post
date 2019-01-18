@@ -153,7 +153,7 @@ app.post('/api/posts/postid', auth, (req, res)=> {
 })
 
 //fetch with sortBy,order,limit, skip
-// /docs?sortBy=sold&order=desc&limit=4&skip=5
+// /docs?sortBy=_id&order=desc&limit=4&skip=5
 app.get('/api/posts/docs', (req,res)=> {
     let sortBy = req.query.sortBy ? req.query.sortBy : '_id'
     let order = req.query.order ? req.query.order : 'desc'

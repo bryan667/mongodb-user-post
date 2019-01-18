@@ -9,7 +9,6 @@ import UserImage from '../ui/user_image'
 const Home = (props)=> {
     return (
         <div className='home_main' >
-                {console.log('home:', props.user)}
                 {props.user.userData ?
                 <React.Fragment>
                     {props.user.userData.isAuth===true ? 

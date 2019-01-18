@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
 import {Button, Glyphicon } from 'react-bootstrap'
 import ReactLoading from 'react-loading'
+import {connect} from 'react-redux'
+
 import {validateFunction, showError, convertArray, reverseArray} from '../ui/misc'
+import {postDocs} from '../../redux/actions/post_action'
 import EditModal from './edit_modal'
 import ImageModal from './image_modal'
 import RemoveModal from './remove_modal'
 import ImageUploader from './image_uploader'
 import UserImage from '../ui/user_image'
-import retrieveUserData from '../../high-order-comp/user_data'
 import '../../css/view_post.css'
-
 
 class ViewPost extends Component {
 
@@ -20,8 +21,6 @@ class ViewPost extends Component {
         reload: false,
         postsLoading: true,
         previousLength: 0,
-        scrollHeight: 0,
-        itemsToDisplay: 10,
         posts: [],
         image:{
             fileName: '',
@@ -60,13 +59,18 @@ class ViewPost extends Component {
 
     static getDerivedStateFromProps(props,state) {
         return state = {
-            userData: props.userData
+            userData: props.user.userData
         }
     }
 
     componentDidMount() {
         window.addEventListener('scroll', this.onScroll)
-
+        this.props.dispatch(postDocs(5)).then(res => {
+            console.log(res)
+            this.setState({
+                posts: res.payload.docs
+            })
+        })
     }
 
     componentWillUnmount() {
@@ -115,14 +119,23 @@ class ViewPost extends Component {
 
         if (this.state.posts.length !== this.state.previousLength) {
             if (body.scrollHeight - body.scrollTop <= body.clientHeight + 5) {
-                let addItems = this.state.itemsToDisplay + 5
                 this.setState({
-                    itemsToDisplay: addItems,
                     postsLoading: true,
-                    scrollHeight: body.scrollHeight,
                     previousLength: this.state.posts.length
                 })
             }
+            
+            this.props.dispatch(postDocs(2, this.state.previousLength)).then(res => {
+                const setPosts = this.state.posts
+                res.payload.docs.forEach((posts)=> {
+                    setPosts.push(posts)
+                })
+                
+                this.setState({
+                    posts: setPosts,
+                    postsLoading: false
+                })
+            })
         }
     }
 
@@ -228,9 +241,11 @@ class ViewPost extends Component {
                     <div className='posts_div'>
                         <div className='user_detail'>
                             {!this.state.reload ? 
-                                <UserImage 
-                                    email={items.email}
-                                />
+                                <div className='img_profile'>
+                                    <UserImage 
+                                        imageID={items.userInfo.imageID}
+                                    />
+                                </div>
                             :
                             <div className='img_profile'>
                                 <div className='spinner_wrap'>
@@ -244,10 +259,10 @@ class ViewPost extends Component {
                             </div>
                             }
                             <div className='right'>
-                                <h2 className='full_name'>{`${items.fullName} (${items.email})`}</h2>
-                                <div className='timestamp'>{items.timeStamp}</div>
+                                <h2 className='full_name'>{`${items.userInfo.firstname} ${items.userInfo.lastname}(${items.userInfo.email})`}</h2>
+                                <div className='timestamp'>{items.createdAt}</div>
                             </div>
-                            {(items.email === this.state.userData.email) ?
+                            {(items.userInfo.email === this.state.userData.email) ?
                                 <div className='edit_wrap'>
                                     <Button onClick={()=> this.editPost(items, i, 'editModal')}>
                                         <Glyphicon glyph="edit"/> 
@@ -281,9 +296,10 @@ class ViewPost extends Component {
 
     render() {
         const { disabled, postsLoading, imageModal, editModal, removeModal} = this.state
-
         return (
             <div className='posts_block'>
+                {console.log('posts:', this.props)}
+                {console.log('post_state:', this.state)}
                     <ImageModal 
                         src={imageModal.src}
                         display={imageModal.display}    
@@ -350,4 +366,11 @@ class ViewPost extends Component {
     }
 }
 
-export default retrieveUserData(ViewPost);
+function mapStatetoProps(state) {
+    return {
+        posts: state.post
+    }
+}
+
+
+export default connect(mapStatetoProps)(ViewPost);
