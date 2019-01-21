@@ -80,8 +80,6 @@ class SignIn extends Component {
             formIsValid = this.state.formData[items].valid            
         }
 
-        console.log('data:', dataToSubmit)
-
         if (formIsValid) {
             this.props.dispatch(loginUser(dataToSubmit)).then(res => {
                 if(res.payload.loginSuccess){
