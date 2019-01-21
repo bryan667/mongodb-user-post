@@ -11,9 +11,10 @@ const NoUser = () => {
                         <p>Wall of</p>
                         <p>Pictures and Stuff</p>
                     </div>
-                    <p>Post pictures and stuff. Join the club!</p>
-                    <p>Please <Link to={`/sign_in`}>sign in</Link></p>
-                    <p>New to the group? Sign up <Link to={`/#`}>here</Link></p>
+                    <div className='desc'>
+                        <p>Post pictures and stuff. Join the club!</p>
+                        <p>Please <Link to={`/sign_in`}>Sign in</Link>. New to the group? Sign up <Link to={`#`}>Here</Link></p>
+                    </div>
                 </div>
             </div>
         </div>

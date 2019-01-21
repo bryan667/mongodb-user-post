@@ -56,7 +56,6 @@ const Header = (props) => {
 
     return (
         <div>
-            {console.log('header:', props)}
             <Navbar inverse collapseOnSelect>
             <Navbar.Header>
                 <IndexLinkContainer to='/'>

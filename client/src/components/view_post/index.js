@@ -3,8 +3,9 @@ import {Button, Glyphicon } from 'react-bootstrap'
 import ReactLoading from 'react-loading'
 import {connect} from 'react-redux'
 
-import {validateFunction, showError, convertArray, reverseArray} from '../ui/misc'
-import {getPosts, newPost, byPostID} from '../../redux/actions/post_action'
+import {validateFunction, showError} from '../ui/misc'
+import {getPosts, newPost, byPostID, deletePost} from '../../redux/actions/post_action'
+import { uploadImage } from '../../redux/actions/image_actions'
 import EditModal from './edit_modal'
 import ImageModal from './image_modal'
 import RemoveModal from './remove_modal'
@@ -22,8 +23,10 @@ class ViewPost extends Component {
         previousLength: 0,
         posts: [],
         image:{
-            fileName: '',
-            id: '',
+            isUploading:false,
+            file: '',
+            previewResult: '',
+            error: '',
         },
         imageModal: {
             src: '',
@@ -65,7 +68,6 @@ class ViewPost extends Component {
     componentDidMount() {
         window.addEventListener('scroll', this.onScroll)
         this.props.dispatch(getPosts(5)).then(res => {
-            console.log(res)
             this.setState({
                 posts: res.payload.docs
             })
@@ -105,7 +107,22 @@ class ViewPost extends Component {
     }
 
     deletePost = () => {
- 
+        const tempElement = {...this.state.removeModal}
+        const tempPosts = this.state.posts
+        this.props.dispatch(deletePost(tempElement.id)).then((res)=> {
+            if (res.payload.success === true) {
+                tempElement.show = false
+                tempPosts.splice(tempElement.index, 1)
+
+                this.setState({ 
+                    posts: tempPosts,
+                    removeModal: tempElement,
+                    reload: true
+                })
+            } else {
+                console.log('error deleting post')
+            }
+        })
     }
 
     savePost = () => {
@@ -118,8 +135,8 @@ class ViewPost extends Component {
                     posts: tempPost
                 })
             })
+            this.closePost('editModal')
         }
-        this.closePost('editModal')
     }
 
     onScroll =(event)=> {
@@ -133,7 +150,7 @@ class ViewPost extends Component {
                 })
             }
             
-            this.props.dispatch(getPosts(2, this.state.previousLength)).then(res => {
+            this.props.dispatch(getPosts(5, this.state.previousLength)).then(res => {
                 const setPosts = this.state.posts
                 res.payload.docs.forEach((posts)=> {
                     setPosts.push(posts)
@@ -156,6 +173,8 @@ class ViewPost extends Component {
             [tempElement.id]: tempElement,
             formError: !tempElement.valid
         })
+
+        return(!tempElement.valid)
     }
 
     updateForm = (event) => {
@@ -166,28 +185,37 @@ class ViewPost extends Component {
 
     submitPost =()=> {
         const tempState = {...this.state}
-        this.errorCheck(tempState.textarea1)
+        const errorCheck = this.errorCheck(tempState.textarea1)
 
-        if (this.state.formError === false) {
+        if (errorCheck === false) {
             const dataToSubmit = {
                 userInfo: tempState.userData._id,
                 email: tempState.userData.email,
                 post: tempState.textarea1.value,
             }
 
-            if (tempState.image.id !== '') {
-                dataToSubmit.imageID = tempState.image.id
+            if (tempState.image.file !== '') {
+                this.props.dispatch(uploadImage(tempState.image.file)).then(res => {
+                    this.reset()
+                    dataToSubmit.imageID = res.payload.imageID
+                   
+                    this.props.dispatch(newPost(dataToSubmit)).then(res => {
+                        tempState.posts.unshift(res.payload.article)
+                        this.setState({
+                            posts: tempState.posts,
+                        })
+                    })
+                })
+            } else {
+                this.props.dispatch(newPost(dataToSubmit)).then(res => {
+                    tempState.posts.unshift(res.payload.article)
+                    this.setState({
+                        posts: tempState.posts,
+                    })
+                })
             }
 
-            this.props.dispatch(newPost(dataToSubmit)).then(res => {
-                tempState.posts.unshift(res.payload.article)
-                this.setState({
-                    posts: tempState.posts,
-                })
-            })
-
-            tempState.image.fileName = ''
-            tempState.image.id = ''
+            tempState.image.file = ''
             tempState.textarea1.value = ''
 
             this.setState({
@@ -204,22 +232,22 @@ class ViewPost extends Component {
         }
     }
 
-    storeFilename(imageFilename, imageURL) {
-        const imageData = {...this.state.image}
-        imageData.fileName = imageFilename
-        imageData.url = imageURL
+    removeImage = () => {
+        const tempImage = this.state.image
+        tempImage.file = ''
 
-        this.setState({image: imageData})
+        this.setState({
+            image: tempImage
+        })
     }
 
-    removeImage = () => {
-        ////
-        
-        const imageData = {...this.state.image}
-        imageData.fileName = ''
-        imageData.url = ''
+    storeImage = (file) => {
+        const tempImage = this.state.image
+        tempImage.file = file
 
-        this.setState({image: imageData})
+        this.setState({
+            image: tempImage
+        })
     }
 
     feedModal = (event) => {
@@ -240,32 +268,84 @@ class ViewPost extends Component {
         })
     }
 
+    uploadAgain = () => {
+        this.removeImage()
+        this.reset()
+    }
+
+    reset = () => {
+        const tempImage = this.state.image
+        tempImage.isUploading = false
+        tempImage.previewResult = ''
+        tempImage.error = ''
+        this.setState({
+            image: tempImage
+        })
+    }
+
+    previewFile = (event) => {
+        const tempImage = this.state.image
+        const file = event.target.files[0]
+        const reader  = new FileReader()
+        const maxSize = 1024 * 1024
+       
+        if (file) {
+            reader.readAsDataURL(file)
+            const fileSize = file.size
+            const imageTest = /^image/i.test(file.type)
+
+            if (fileSize < maxSize) {
+                tempImage.isUploading = true
+                tempImage.previewResult = ''        
+                this.setState({
+                    image: tempImage
+                })
+
+                reader.addEventListener('load', () => {
+                    if (imageTest === true) {
+                        this.storeImage(file)
+                        tempImage.isUploading = false
+                        tempImage.previewResult = reader.result
+                        tempImage.error = ''
+                        this.setState({
+                            image: tempImage
+                        })
+                    } else {
+                        tempImage.isUploading = false
+                        tempImage.error = 'File is not an image'
+                        this.setState({
+                            image: tempImage
+                        })
+                    }
+                }, false)
+
+            } else {
+                tempImage.error = `File is too large. Max image size is 1MB`
+                this.setState({
+                    image: tempImage
+                })
+            }
+        } else {
+            tempImage.error = ''
+            this.setState({
+                image: tempImage
+            })
+        }
+    }
+
     mapPosts = (posts) => (
         posts ?
             posts.map((items, i)=>(
                 <div key={i}>
                     <div className='posts_div'>
                         <div className='user_detail'>
-                            {!this.state.reload ? 
-                                <div className='img_profile'>
-                                    <UserImage 
-                                        imageID={items.userInfo.imageID}
-                                    />
-                                </div>
-                            :
                             <div className='img_profile'>
-                                <div className='spinner_wrap'>
-                                    <ReactLoading 
-                                    className='spinner'
-                                    type={'spin'} 
-                                    color={'blue'} 
-                                    height={'10%'} 
-                                    width={'10%'} />
-                                </div>
+                                <UserImage 
+                                    imageID={items.userInfo.imageID}
+                                />
                             </div>
-                            }
                             <div className='right'>
-                                <h2 className='full_name'>{`${items.userInfo.firstname} ${items.userInfo.lastname}(${items.userInfo.email})`}</h2>
+                                <h2 className='full_name'>{`${items.userInfo.firstname} ${items.userInfo.lastname} (${items.userInfo.email})`}</h2>
                                 <div className='timestamp'>{items.createdAt}</div>
                             </div>
                             {(items.userInfo.email === this.state.userData.email) ?
@@ -282,9 +362,9 @@ class ViewPost extends Component {
                             }
                         </div>
                         <p>{items.post}</p>
-                        {items.imageURL ? 
+                        {items.imageID ? 
                             <div className='img_post_wrapper'>
-                                <img src={items.imageURL}
+                                <img src={`/api/images/imageid?id=${items.imageID}`}
                                 alt='wow much'
                                 className='img_post'
                                 onClick={(event) => this.feedModal(event)}
@@ -304,8 +384,6 @@ class ViewPost extends Component {
         const { disabled, postsLoading, imageModal, editModal, removeModal} = this.state
         return (
             <div className='posts_block'>
-                {console.log('posts:', this.props)}
-                {console.log('post_state:', this.state)}
                     <ImageModal 
                         src={imageModal.src}
                         display={imageModal.display}    
@@ -326,11 +404,11 @@ class ViewPost extends Component {
                     <form className='form_block'>
                         <ImageUploader
                             tag={"Insert Image"}
-                            fileName={this.state.image.fileName}
-                            id={this.state.image.id}
-                            passFile={(filename, url)=> this.storeFilename(filename, url)}
-                            removeImage={()=> this.removeImage()}
-                            reset={()=> this.reset()}
+                            previewFile={(e)=> this.previewFile(e)}                            
+                            uploadAgain={()=> this.uploadAgain()}
+                            error={this.state.image.error}
+                            previewResult={this.state.image.previewResult}
+                            isUploading={this.state.image.isUploading}
                         />
                         <div className='textarea_block'>
                             <textarea

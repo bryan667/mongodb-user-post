@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { POSTS_SERVER } from '../../server_routes'
-import { GET_POSTS, NEW_POST, POST_ID } from './type'
+import { GET_POSTS, NEW_POST, POST_ID, DELETE_POST } from './type'
 
 
 export function getPosts(limit,skip=0) {
@@ -29,6 +29,16 @@ export function byPostID(dataToSubmit) {
 
     return {
         type: POST_ID,
+        payload: request
+    }
+}
+
+export function deletePost(id) {
+    const request = axios.get(`${POSTS_SERVER}/remove?id=${id}`)
+        .then(response => response.data) 
+
+    return {
+        type: DELETE_POST,
         payload: request
     }
 }

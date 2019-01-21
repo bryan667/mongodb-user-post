@@ -1,7 +1,6 @@
 import axios from 'axios'
 import { USERS_SERVER } from '../../server_routes'
-import { LOGIN_USER, REGISTER_USER, AUTH_USER, LOGOUT_USER } from './type'
-
+import { LOGIN_USER, AUTH_USER, LOGOUT_USER } from './type'
 
 export function auth() {
     const request = axios.get(`${USERS_SERVER}/auth`)

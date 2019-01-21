@@ -119,6 +119,7 @@ app.get('/api/users/userid', (req, res)=> {
 //                          POSTS
 //=================================================================
 
+//create
 app.post('/api/posts/newpost', auth, (req, res)=> {
     const post = new Post(req.body)
 
@@ -131,7 +132,7 @@ app.post('/api/posts/newpost', auth, (req, res)=> {
     })
 })
 
-//edit post
+//update
 app.post('/api/posts/postid', auth, (req, res)=> {
     if (!req.body.id) {
         return res.status(200).json({
@@ -154,8 +155,8 @@ app.post('/api/posts/postid', auth, (req, res)=> {
     })
 })
 
-//fetch with sortBy,order,limit, skip
-// /docs?sortBy=_id&order=desc&limit=4&skip=5
+//read
+//fetch with sortBy,order,limit, skip /docs?sortBy=_id&order=desc&limit=4&skip=5
 app.get('/api/posts/docs', (req,res)=> {
     let sortBy = req.query.sortBy ? req.query.sortBy : '_id'
     let order = req.query.order ? req.query.order : 'desc'
@@ -175,6 +176,20 @@ app.get('/api/posts/docs', (req,res)=> {
             docs
         })
     })
+})
+
+//delete
+app.get('/api/posts/remove', (req,res)=> {
+    Post.
+    findOneAndRemove(
+        {_id: req.query.id},
+        (err)=>{
+            if (err) return res.status(400).send(err)
+            return res.status(200).json({
+                success: true,
+                message: 'post deleted',
+            })
+        })
 })
 
 //=================================================================

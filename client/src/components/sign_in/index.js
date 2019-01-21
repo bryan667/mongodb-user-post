@@ -84,7 +84,6 @@ class SignIn extends Component {
 
         if (formIsValid) {
             this.props.dispatch(loginUser(dataToSubmit)).then(res => {
-                console.log('res:', res)
                 if(res.payload.loginSuccess){
                     this.props.history.push('/')
                 } else {

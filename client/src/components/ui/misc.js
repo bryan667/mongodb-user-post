@@ -28,25 +28,3 @@ export const showError = (formData) => {
     </div>
     return errorMessage
 }
-
-export const convertArray = (snap) => {
-    const data = []
-    snap.forEach((childSnap) => {
-        data.push({
-            ...childSnap.val(),
-            id: childSnap.key
-        })
-    })
-    return data
-
-}
-
-export const reverseArray = (array) => {
-    let reversedArray = []
-
-    for (let i = array.length - 1 ; i >= 0 ; i--) {
-        reversedArray.push(array[i])
-    }
-
-    return reversedArray
-}

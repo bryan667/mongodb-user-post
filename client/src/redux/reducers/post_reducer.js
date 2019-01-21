@@ -7,4 +7,4 @@ export default function post(state={},action) {
         default:
             return state
     }
-} 
+}
