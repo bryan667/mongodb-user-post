@@ -7,7 +7,7 @@ const ImageUploader =(props)=> {
             { !props.previewResult ?
                 <div className='image_up'>
                     <div>{props.tag}</div>
-                    <input type="file" onChange={(e)=> props.previewFile(e)} accept='image/*' data-max-size='2048'></input>
+                    <input type="file" onChange={(e)=> props.previewFile(e)} accept='image/*'></input>
                     {props.error ?
                         <div className='error_label'>{props.error}</div>
                         : null
