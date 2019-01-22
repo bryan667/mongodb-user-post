@@ -37,7 +37,7 @@ class SignIn extends Component {
                     placeholder: 'Enter your password'
                 },
                 validation: {
-                    required: true,
+                    required: true
                 },
                 valid: false,
                 validationMessage: ''
@@ -77,11 +77,12 @@ class SignIn extends Component {
 
         for (let items in this.state.formData) {            
             dataToSubmit[items] = this.state.formData[items].value
-            formIsValid = this.state.formData[items].valid            
+            formIsValid = formIsValid && this.state.formData[items].valid         
         }
 
         if (formIsValid) {
             this.props.dispatch(loginUser(dataToSubmit)).then(res => {
+                console.log(res.payload)
                 if(res.payload.loginSuccess){
                     this.props.history.push('/')
                 } else {

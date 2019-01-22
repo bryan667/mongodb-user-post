@@ -10,7 +10,7 @@ const postSchema = mongoose.Schema({
     post: {
         type: String,
         required: true,
-        maxlength: 100000
+        maxlength: 200
     },
     imageID: {
         type: String,

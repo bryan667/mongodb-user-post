@@ -3,28 +3,32 @@ import {Link} from 'react-router-dom'
 import {Button} from 'react-bootstrap'
 
 import SignUp from './signup_modal'
+import Success from './success_modal'
 import '../../css/redirect.css'
 
 class NoUser extends Component {
     state = {
         signUpModal: {
             show: false,          
+        },
+        successModal: {
+            show: false,
         }
     }
 
-    openModal = () => {
-        const tempModal = this.state.signUpModal
+    openModal = (modal) => {
+        const tempModal = this.state[modal]
         tempModal.show = true
         this.setState({
-            signUpModal: tempModal
+            [modal]: tempModal
         })
     }
 
-    closeModal = () => {
-        const tempModal = this.state.signUpModal
+    closeModal = (modal) => {
+        const tempModal = this.state[modal]
         tempModal.show = false
         this.setState({
-            signUpModal: tempModal
+            [modal]: tempModal
         })
     }
     
@@ -39,13 +43,23 @@ class NoUser extends Component {
                         </div>
                         <div className='desc'>
                             <p>Post pictures and stuff. Join the club! Please <Link to={`/sign_in`}>Sign in</Link>.</p> 
-                            <p>New to the group? Sign up <Button onClick={()=> {this.openModal()}}>Here</Button></p>
+                            <p>New to the group? {'\u00A0'}
+                                <Button bsStyle="primary" 
+                                    onClick={()=> {this.openModal('signUpModal')}}
+                                >Sign up here
+                                </Button>                      
+                            </p>
                         </div>
                     </div>
                 </div>
                 <SignUp 
                     show={this.state.signUpModal.show}
-                    closeModal={()=> this.closeModal()}  
+                    closeModal={()=> this.closeModal('signUpModal')} 
+                    success={()=> this.openModal('successModal')} 
+                />
+                <Success 
+                    show={this.state.successModal.show}
+                    closeModal={()=> this.closeModal('successModal')}  
                 />
             </div>
         );

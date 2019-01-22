@@ -8,10 +8,16 @@ import {validateFunction} from '../ui/misc'
 class SignUp extends Component {
 
     state = {
-        formError: false,        
+        formError: false,
         disabled: false,
         responseError:'',
         formSuccess: '',
+        image:{
+            isUploading:false,
+            file: '',
+            previewResult: '',
+            error: '',
+        },
         formData: {
             email: {
                 element: 'input',
@@ -38,6 +44,7 @@ class SignUp extends Component {
                 },
                 validation: {
                     required: true,
+                    password: true
                 },
                 valid: false,
                 validationMessage: ''
@@ -51,7 +58,8 @@ class SignUp extends Component {
                     placeholder: 'Enter firstname'
                 },
                 validation: {
-                    required: true
+                    required: true,
+                    name: true
                 },
                 valid: false,
                 validationMessage: ''
@@ -65,7 +73,8 @@ class SignUp extends Component {
                     placeholder: 'Enter lastname'
                 },
                 validation: {
-                    required: true
+                    required: true,
+                    name: true
                 },
                 valid: false,
                 validationMessage: ''
@@ -95,15 +104,13 @@ class SignUp extends Component {
     }
 
     submitForm() {
-        let dataToSubmit = {}
+        const dataToSubmit = {}
         let formIsValid = true
 
         for (let items in this.state.formData) {            
             dataToSubmit[items] = this.state.formData[items].value
-            formIsValid = this.state.formData[items].valid            
+            formIsValid = formIsValid && this.state.formData[items].valid     
         }
-
-        console.log('data:', dataToSubmit)
 
         if (formIsValid) {
             this.setState({
@@ -112,25 +119,31 @@ class SignUp extends Component {
 
             axios.post(`api/users/register`, dataToSubmit)
             .then(res => {
-                console.log('user created: ', res.data)
                 if(res.data.success){
-                    alert('registered!')
                     this.setState({
                         formError: false,
                         disabled: false,
                         responseError: ''
                     })
+                    this.props.closeModal()
+                    this.props.success()
                 } else if (res.data.err.code === 11000) {
                     this.setState({
                         formError: false,
                         disabled: false,
-                        responseError: 'someone is already registered on the same email'
+                        responseError: 'someone is already using the same email'
                     })
                 } else if (res.data.err.code) {
                     this.setState({
                         formError: false,
                         disabled: false,
                         responseError: res.data.err.errmsg
+                    })
+                } else if (res.data.err.message) {
+                    this.setState({
+                        formError: false,
+                        disabled: false,
+                        responseError: res.data.err.message
                     })
                 } else {
                     this.setState({
@@ -142,20 +155,35 @@ class SignUp extends Component {
             })
         } else {
             this.setState({
-                formError: true
+                formError: true,
+                responseError: false
             })
         }
+    }
+
+    closeModal = () => {
+        this.resetWarnings()
+        this.props.closeModal()
+    }
+
+    resetWarnings = () => {
+        this.setState({
+            formError: false,
+            disabled: false,
+            responseError:'',
+            formSuccess: '',
+        })
     }
 
     render() {
         const {disabled, responseError, formError} = this.state
         return (
-            <Modal show={this.props.show} onHide={()=> this.props.closeModal()}>
+            <Modal show={this.props.show} onHide={()=> this.closeModal()}>
                 <Modal.Header>
-                    Sign Up
+                    Sign Up Form
                 </Modal.Header>
                 <Modal.Body>
-                    <form>
+                    <form className='signup_form'>
                         <FormField
                                 id={'firstname'}
                                 formData={this.state.formData.firstname}
@@ -188,7 +216,7 @@ class SignUp extends Component {
                     </form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button onClick={()=> this.props.closeModal()}>Cancel</Button>
+                    <Button onClick={()=> this.closeModal()}>Cancel</Button>
                     <Button bsStyle="primary"
                             onClick={() => this.submitForm()}
                             disabled={disabled}

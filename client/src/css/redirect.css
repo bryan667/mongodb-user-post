@@ -37,3 +37,19 @@
 .back_img .block .desc a:hover {
     color: #53afff;
 }
+
+.signup_form {
+    padding: 2rem;
+    padding-left: 4rem;
+    padding-right: 4rem;
+}
+
+.signup_form input{
+    width: 100%;
+}
+
+.desc button {
+    font-size: 1.6rem;
+    font-family: 'Righteous';
+}
+

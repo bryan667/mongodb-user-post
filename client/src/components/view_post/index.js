@@ -3,7 +3,7 @@ import {Button, Glyphicon } from 'react-bootstrap'
 import ReactLoading from 'react-loading'
 import {connect} from 'react-redux'
 
-import {validateFunction, showError} from '../ui/misc'
+import {validateFunction, showError, previewFile, removeImage, reset} from '../ui/misc'
 import {getPosts, newPost, byPostID, deletePost} from '../../redux/actions/post_action'
 import { uploadImage } from '../../redux/actions/image_actions'
 import EditModal from './edit_modal'
@@ -53,6 +53,7 @@ class ViewPost extends Component {
             value: '',
             validation: {
                 required: true,
+                textarea: true,
             },
             valid: false,
             validationMessage: '',
@@ -196,7 +197,11 @@ class ViewPost extends Component {
 
             if (tempState.image.file !== '') {
                 this.props.dispatch(uploadImage(tempState.image.file)).then(res => {
-                    this.reset()
+                    reset(tempState.image, (tempImage)=> {
+                        this.setState({
+                            image: tempImage
+                        })
+                    })
                     dataToSubmit.imageID = res.payload.imageID
                    
                     this.props.dispatch(newPost(dataToSubmit)).then(res => {
@@ -232,15 +237,6 @@ class ViewPost extends Component {
         }
     }
 
-    removeImage = () => {
-        const tempImage = this.state.image
-        tempImage.file = ''
-
-        this.setState({
-            image: tempImage
-        })
-    }
-
     storeImage = (file) => {
         const tempImage = this.state.image
         tempImage.file = file
@@ -269,68 +265,28 @@ class ViewPost extends Component {
     }
 
     uploadAgain = () => {
-        this.removeImage()
-        this.reset()
-    }
-
-    reset = () => {
         const tempImage = this.state.image
-        tempImage.isUploading = false
-        tempImage.previewResult = ''
-        tempImage.error = ''
-        this.setState({
-            image: tempImage
+
+        removeImage(tempImage, (tempImage)=> {
+            this.setState({
+                image: tempImage
+            })
+        })
+
+        reset(tempImage, (tempImage)=> {
+            this.setState({
+                image: tempImage
+            })
         })
     }
 
     previewFile = (event) => {
         const tempImage = this.state.image
-        const file = event.target.files[0]
-        const reader  = new FileReader()
-        const maxSize = 1024 * 1024
-       
-        if (file) {
-            reader.readAsDataURL(file)
-            const fileSize = file.size
-            const imageTest = /^image/i.test(file.type)
-
-            if (fileSize < maxSize) {
-                tempImage.isUploading = true
-                tempImage.previewResult = ''        
-                this.setState({
-                    image: tempImage
-                })
-
-                reader.addEventListener('load', () => {
-                    if (imageTest === true) {
-                        this.storeImage(file)
-                        tempImage.isUploading = false
-                        tempImage.previewResult = reader.result
-                        tempImage.error = ''
-                        this.setState({
-                            image: tempImage
-                        })
-                    } else {
-                        tempImage.isUploading = false
-                        tempImage.error = 'File is not an image'
-                        this.setState({
-                            image: tempImage
-                        })
-                    }
-                }, false)
-
-            } else {
-                tempImage.error = `File is too large. Max image size is 1MB`
-                this.setState({
-                    image: tempImage
-                })
-            }
-        } else {
-            tempImage.error = ''
+        previewFile(event, tempImage, (tempImage) => {
             this.setState({
                 image: tempImage
             })
-        }
+        })
     }
 
     mapPosts = (posts) => (
