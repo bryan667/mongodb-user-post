@@ -57,11 +57,6 @@ h2 {
     position: absolute;
     top: 0;
     right: 0;
-    cursor: pointer;
-    background: #5a99ca;
-    color: #ffffff;
-    border: 0.1rem solid white;
-    padding: 1rem;
 }
 
 .posts_div {
@@ -83,6 +78,16 @@ h2 {
     cursor: pointer;
     width: 10rem;
     height: 10rem;
+    text-align:center;
+}
+
+.posts_div .img_profile .img {
+    width: 10rem;
+    height: 10rem;
+    display:inline-block;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .posts_div .right {

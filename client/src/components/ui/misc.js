@@ -22,9 +22,9 @@ export const validateFunction = (element) => {
     }
 
     if(element.validation.textarea){
-        const regex1 = /^.{0,200}$/
+        const regex1 = /^.{0,1000}$/
         const valid = regex1.test(element.value.trim())
-        const message = `${!valid ? 'Max length 200 chars':''}`
+        const message = `${!valid ? 'Max length 1000 chars':''}`
         error = !valid ? [valid,message] : error
     }
 

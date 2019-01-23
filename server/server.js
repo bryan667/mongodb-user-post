@@ -77,6 +77,32 @@ app.post('/api/users/register', (req, res)=> {
     })
 })
 
+//edit user
+app.post('/api/users/edituser', auth, (req, res)=> {
+    if (req.body._id != req.user._id) {
+        return res.status(200).json({
+            success: false,
+            message: 'unable to edit profile'
+        })
+    }
+
+    if (req.body._id == req.user._id) {
+        User.findOneAndUpdate(
+            {_id: req.body._id},
+            req.body,
+            {new: true},
+            (err, doc)=>{
+            if (err) return res.json({success:false, err})
+            return res.status(200).json({
+                success: true,
+                message: 'profile successfully updated',
+                doc
+            })
+        })
+    }
+})
+
+
 //query userinfo currently logged in
 app.get('/api/users/auth', auth, (req, res)=> {
     return res.status(200).json({
@@ -112,7 +138,6 @@ app.get('/api/users/userid', (req, res)=> {
         }
     )
 })
-
 
 //=================================================================
 //                          POSTS
@@ -240,7 +265,30 @@ app.get('/api/images/imageid', (req, res)=> {
         {_id: req.query.id},
         (err, doc)=>{
             if (err) return res.json({success:false, err})
+            if (!doc) return res.json({success:false, message: 'no image result'})
             return res.status(200).contentType(doc.contentType).send(doc.data)
         }
+    )
+})
+
+//query /removeimage?id=5c3ea39b83dfa729a8bdc92a
+app.get('/api/images/removeimage', auth, (req, res)=> {
+    if (!req.query.id) {
+        return res.status(200).json({
+            success: false,
+            message: 'no imageID'
+        })
+    }
+
+    Image.findOneAndDelete(
+        {_id: req.query.id},
+        (err)=>{
+            if (err) return res.status(400).send(err)
+            return res.json({
+                success: true,
+                imageID: req.query.id,
+                message: 'image successfully deleted',                
+            })
+        }        
     )
 })

@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import ReactLoading from 'react-loading';
 import { connect } from 'react-redux'
-import {Modal, Button} from 'react-bootstrap'
 
 import NoUser from './no_user'
 import ImageUp from './imageup_modal'
@@ -11,7 +10,6 @@ import '../../css/home.css'
 class Home extends Component {
 
     state = {
-        disabled: false,
         imageUpModal: {
             show: false,
         }
@@ -26,10 +24,6 @@ class Home extends Component {
         })
     }
 
-    previewFile = (e) => {
-        
-    }
-
     render() {
         return (
             <div className='home_main' >
@@ -39,8 +33,8 @@ class Home extends Component {
                             <div>
                                 <ImageUp 
                                     show={this.state.imageUpModal.show}
-                                    disabled={this.state.disabled}
                                     close={()=> this.click()}
+                                    userData={this.props.user.userData}
                                 />
                                 <div className='home_container'>
                                         {this.props.user.userData.email !=='' ?

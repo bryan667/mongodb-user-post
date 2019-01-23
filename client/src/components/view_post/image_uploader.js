@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactLoading from 'react-loading'
+import {Button} from 'react-bootstrap'
 
 const ImageUploader =(props)=> {
     return (
@@ -7,7 +8,8 @@ const ImageUploader =(props)=> {
             { !props.previewResult ?
                 <div className='image_up'>
                     <div>{props.tag}</div>
-                    <input type="file" onChange={(e)=> props.previewFile(e)} accept='image/*'></input>
+                    <input type="file" onChange={(e)=> props.previewFile(e)} accept='image/*'
+                    ></input>
                     {props.error ?
                         <div className='error_label'>{props.error}</div>
                         : null
@@ -33,9 +35,10 @@ const ImageUploader =(props)=> {
                             src={props.previewResult}
                             alt='preview'
                         />
-                        <div className="remove" onClick={()=>props.uploadAgain()}>
-                            Remove
-                        </div>
+                        <Button className="remove" 
+                            onClick={()=>props.uploadAgain()}
+                            bsStyle="primary"
+                        >Remove</Button>
                     </div>
                 </div>
             :null

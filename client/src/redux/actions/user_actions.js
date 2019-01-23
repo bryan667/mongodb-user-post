@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { USERS_SERVER } from '../../server_routes'
-import { LOGIN_USER, AUTH_USER, LOGOUT_USER, REGISTER_USER } from './type'
+import { LOGIN_USER, AUTH_USER, LOGOUT_USER, REGISTER_USER, EDIT_USER} from './type'
 
 export function auth() {
     const request = axios.get(`${USERS_SERVER}/auth`)
@@ -38,6 +38,16 @@ export function registerUser(dataToSubmit) {
 
     return {
         type: REGISTER_USER,
+        payload: request
+    }
+}
+
+export function editUser(dataToSubmit) {
+    const request = axios.post(`${USERS_SERVER}/edituser`, dataToSubmit)
+        .then(response => response.data)
+
+    return {
+        type: EDIT_USER,
         payload: request
     }
 }
