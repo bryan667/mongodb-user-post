@@ -12,6 +12,8 @@ mongoose.connect(process.env.DATABASE, { useNewUrlParser: true })
 mongoose.Promise = global.Promise
 mongoose.set('useCreateIndex', true)
 
+const path = require('path')
+app.use(express.static(path.join(__dirname, 'client/build')))
 
 
 app.use(bodyParser.urlencoded({extended: true}))
@@ -227,11 +229,11 @@ app.post('/api/images/upload', upload.single('inputFile'), (req, res, err)=> {
         return res.json({ message: 'multer error occurred while uploading file' })
     } else if (!req.file) {
         return res.json({ message: 'No file selected' })        
-    } else if (req.file.size > (1024 * 1024)) {
+    } else if (req.file.size > (1024 * 300)) {
         fs.unlink(req.file.path, (err) => {
             if (err) throw err;
         })
-        return res.json({ message: 'File is too large, limit 1MB' }) 
+        return res.json({ message: 'File is too large, limit 300kb' }) 
     }
     
     // reading file from uploads path

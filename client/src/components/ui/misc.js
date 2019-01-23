@@ -62,7 +62,7 @@ export const showError = (formData) => {
 export const previewFile = (event, tempImage, cb) => {
     const file = event.target.files[0]
     const reader  = new FileReader()
-    const maxSize = 1024 * 1024
+    const maxSize = 1024 * 300
 
     if (file) {
         reader.readAsDataURL(file)
@@ -89,7 +89,7 @@ export const previewFile = (event, tempImage, cb) => {
             }, false)
 
         } else {
-            tempImage.error = `File is too large. Max image size is 1MB`
+            tempImage.error = `File is too large. Max image size is 300kb`
             cb(tempImage)
         }
     } else {
