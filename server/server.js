@@ -4,7 +4,6 @@ const cookieParser = require('cookie-parser')
 const fs = require('fs')
 const path = require('path')
 const multer = require('multer')
-const cors = require('cors');
 require('dotenv').config({path:__dirname+'/.env'})
 
 const app = express ()
@@ -17,7 +16,6 @@ mongoose.set('useCreateIndex', true)
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json())
 app.use(cookieParser())
-app.use(cors());
 
 const port = process.env.PORT || 3010
 
