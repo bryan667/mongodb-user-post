@@ -1,7 +1,6 @@
 {
   "name": "mongodb-user-post",
   "version": "0.1.0",
-  "proxy": "http://localhost:3002",
   "private": true,
   "dependencies": {
     "axios": "^0.18.0",
