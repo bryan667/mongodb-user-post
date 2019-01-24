@@ -6,8 +6,6 @@ const path = require('path')
 const multer = require('multer')
 require('dotenv').config({path:__dirname+'/.env'})
 
-//"nodemon server/server.js"
-
 const app = express ()
 const mongoose = require('mongoose')
 
@@ -19,7 +17,7 @@ app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json())
 app.use(cookieParser())
 
-const port = process.env.PORT || 3010
+const port = process.env.PORT || 3011
 
 app.listen(port, ()=> {
     console.log(`server running on ${port}`)
@@ -38,7 +36,6 @@ console.log('meowwww!')
 
 //production mode
 if(process.env.NODE_ENV === 'production') {
-    console.log('meowwww!')
     app.use(express.static(path.join(__dirname+'/../client/build')))
     app.get('/', (req, res) => {
         res.sendFile(path.join(__dirname+'/../client/build/index.html'));
