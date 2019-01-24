@@ -1,6 +1,7 @@
 {
   "name": "mongodb-user-post",
   "version": "1.0.0",
+  "proxy": "http://localhost:3010",
   "description": "",
   "main": "index.js",
   "scripts": {
