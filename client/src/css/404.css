@@ -1,11 +1,12 @@
 .not_found_wrapper {
     padding-top: 20vh;
     text-align: center;
+    min-height: 65rem;
     height: 65vh;
 }
 
 .not_found_wrapper .not_found {
-    background: url('/images/doge.jpg') no-repeat;
+    background: url('/images/doge.jpg') center no-repeat;
     margin: auto;
     transition: all .2s ease-in-out;
     border-radius: 50%;
