@@ -16,7 +16,6 @@ mongoose.set('useCreateIndex', true)
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json())
 app.use(cookieParser())
-app.use(express.static(path.join(__dirname, '/../client/build')))
 
 const port = process.env.PORT || 3002
 
@@ -33,9 +32,13 @@ const {Image} = require('./models/image')
 const {auth} = require('./middleware/auth')
 const {upload} = require('./middleware/multer')
 
-app.get('/*', (req, res) => {
-    res.sendFile(path.join(__dirname+'/../client/build/index.html'));
-})
+//production mode
+if(process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '/../client/build')))
+    app.get('/*', (req, res) => {
+        res.sendFile(path.join(__dirname+'/../client/build/index.html'));
+    })
+}
 
 //=================================================================
 //                          USERS
