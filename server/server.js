@@ -33,11 +33,9 @@ const {Image} = require('./models/image')
 const {auth} = require('./middleware/auth')
 const {upload} = require('./middleware/multer')
 
-if( process.env.NODE_ENV === 'production') {
-    app.get('/*', (req, res) => {
-        res.sendFile(path.join(__dirname+'/../client/build/index.html'));
-    })
-}
+app.get('/*', (req, res) => {
+    res.sendFile(path.join(__dirname+'/../client/build/index.html'));
+})
 
 //=================================================================
 //                          USERS
