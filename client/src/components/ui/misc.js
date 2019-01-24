@@ -17,7 +17,7 @@ export const validateFunction = (element) => {
     if(element.validation.name){
         const regex1 = /^(?=.{1,40}$)[a-zA-Z]+(?:[-'\s][a-zA-Z]+)*$/
         const valid = regex1.test(element.value.trim())
-        const message = `${!valid ? 'Can only contain alphanumeric characters, spaces, hyphens, apostrophes':''}`
+        const message = `${!valid ? 'Can only contain letters, spaces, hyphens, apostrophes':''}`
         error = !valid ? [valid,message] : error
     }
 
