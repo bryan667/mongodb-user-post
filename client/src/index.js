@@ -12,8 +12,6 @@ import ReduxThunk from 'redux-thunk'
 
 import Reducer from './redux/reducers/index'
 
-
-
 const createStoreMiddleware = applyMiddleware(promiseMiddleware,ReduxThunk)(createStore)
 
 ReactDOM.render(
