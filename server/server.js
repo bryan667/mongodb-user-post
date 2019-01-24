@@ -8,17 +8,14 @@ require('dotenv').config({path:__dirname+'/.env'}) //loads environment variables
 const app = express ()
 const mongoose = require('mongoose')
 
-mongoose.connect(process.env.DATABASE, { useNewUrlParser: true })
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true })
 mongoose.Promise = global.Promise
 mongoose.set('useCreateIndex', true)
-
-const path = require('path')
-app.use(express.static(path.join(__dirname, 'client/build')))
-
 
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json())
 app.use(cookieParser())
+app.use(express.static(path.join(__dirname, '/../client/build')))
 
 const port = process.env.PORT || 3002
 
@@ -34,6 +31,14 @@ const {Image} = require('./models/image')
 //Middleware
 const {auth} = require('./middleware/auth')
 const {upload} = require('./middleware/multer')
+
+if( process.env.NODE_ENV === 'production') {
+    const path = require('path')
+
+    app.get('/*', (req, res) => {
+        res.sendFile(path.join(__dirname+'/../client/build/index.html'));
+    })
+}
 
 //=================================================================
 //                          USERS
