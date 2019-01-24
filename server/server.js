@@ -2,6 +2,7 @@ const express = require ('express')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const fs = require('fs')
+const path = require('path')
 const multer = require('multer')
 require('dotenv').config({path:__dirname+'/.env'}) //loads environment variables from .env file into process.env
 
@@ -33,9 +34,7 @@ const {auth} = require('./middleware/auth')
 const {upload} = require('./middleware/multer')
 
 if( process.env.NODE_ENV === 'production') {
-    const path = require('path')
-
-    app.get('/*', (req, res) => {
+    app.get('/', (req, res) => {
         res.sendFile(path.join(__dirname+'/../client/build/index.html'));
     })
 }
