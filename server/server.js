@@ -6,6 +6,8 @@ const path = require('path')
 const multer = require('multer')
 require('dotenv').config({path:__dirname+'/.env'})
 
+//"nodemon server/server.js"
+
 const app = express ()
 const mongoose = require('mongoose')
 
