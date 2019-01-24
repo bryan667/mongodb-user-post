@@ -4,7 +4,7 @@ const cookieParser = require('cookie-parser')
 const fs = require('fs')
 const path = require('path')
 const multer = require('multer')
-require('dotenv').config({path:__dirname+'/.env'}) //loads environment variables from .env file into process.env
+require('dotenv').config({path:__dirname+'/.env'})
 
 const app = express ()
 const mongoose = require('mongoose')
