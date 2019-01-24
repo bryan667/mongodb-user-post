@@ -10,6 +10,9 @@
     "client": "npm run start --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\""
   },
+  "engines": {
+    "node": "10.9.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bryan667/mongodb-user-post.git"
