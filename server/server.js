@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser')
 const fs = require('fs')
 const path = require('path')
 const multer = require('multer')
+const cors = require('cors');
 require('dotenv').config({path:__dirname+'/.env'})
 
 const app = express ()
@@ -16,6 +17,7 @@ mongoose.set('useCreateIndex', true)
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json())
 app.use(cookieParser())
+app.use(cors());
 
 const port = process.env.PORT || 3010
 
@@ -32,8 +34,11 @@ const {Image} = require('./models/image')
 const {auth} = require('./middleware/auth')
 const {upload} = require('./middleware/multer')
 
+console.log('meowwww!')
+
 //production mode
 if(process.env.NODE_ENV === 'production') {
+    console.log('meowwww!')
     app.use(express.static(path.join(__dirname+'/../client/build')))
     app.get('/', (req, res) => {
         res.sendFile(path.join(__dirname+'/../client/build/index.html'));
