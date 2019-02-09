@@ -37,11 +37,12 @@ export default function Authe(WrappedComponent, redirect) {
         componentWillUnmount() {
             this.mount = false
         }
-
+        
         render() {
             if (this.state.loading) {
                 return (
                     <div className='spinner_wrapper'>
+                    {console.log(this.state.loading)}
                     <ReactLoading
                         className='spinner'
                         type={'spin'} 
